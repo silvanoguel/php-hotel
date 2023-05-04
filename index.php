@@ -40,6 +40,8 @@ $hotels = [
 
 ];
 
+$filterParking = $_GET["parking"];
+
 ?>
 
 <!DOCTYPE html>
@@ -55,7 +57,16 @@ $hotels = [
 
     <div class="container">
 
-        <table class="table bg-light rounded-3">
+        <form>
+            <label for="parking">Parking</label>
+            <input type="checkbox" name="parking">
+            <br>
+            <input type="submit" value="Filtra">
+            <input type="reset" value="Reset">
+        </form>
+
+
+        <table class="table bg-light">
 
             <thead>
                 <tr>
@@ -76,16 +87,22 @@ $hotels = [
                     $vote = $hotel["vote"];
                     $distance = $hotel["distance_to_center"];
 
-                    echo '<tr>'
-                    . '<td>' . $name . '</td>'
-                    . '<td>' . $description . '</td>'
-                    . '<td>' . $parking. '</td>'
-                    . '<td>' . $vote . '</td>'
-                    . '<td>' . $distance . ' km' . '</td>'
-                    . '</tr>';
-                }
+                    if (!$filterParking || ($filterParking && $parking)) {
+                        echo '<tr>'
+                        . '<td>' . $name . '</td>'
+                        . '<td>' . $description . '</td>'
+                        . '<td>' . ($parking ? "YES" : "NO") . '</td>'
+                        . '<td>' . $vote . '</td>'
+                        . '<td>' . $distance . ' km' . '</td>'
+                        . '</tr>';
+    
+                    }
+
+                    }
+
                 ?>
             </tbody>
+            
         </table>
 
     </div>
