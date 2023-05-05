@@ -40,7 +40,31 @@ $hotels = [
 
 ];
 
-$filterParking = $_GET["parking"];
+
+$filtered_hotels = $hotels;
+
+if(isset($_GET["parking"]) && $_GET["parking"] === "1" ) {
+    $temp_hotels = [];
+
+    foreach($filtered_hotels as $hotel) {
+        if($hotel["parking"]) {
+            $temp_hotels[] = $hotel;
+        }
+    }
+
+    $filtered_hotels = $temp_hotels;
+}
+
+if(isset($_GET["vote"]) && $_GET["vote"] !== "" ) {
+    $temp_hotels = [];
+
+    foreach($filtered_hotels as $hotel) {
+        if($hotel["vote"] >= $_GET["vote"]) {
+            $temp_hotels[] = $hotel;
+        }
+    }
+    $filtered_hotels = $temp_hotels;
+}
 
 ?>
 
@@ -57,17 +81,23 @@ $filterParking = $_GET["parking"];
 
     <div class="container">
 
-        <form>
-            <label for="parking">Parking</label>
-            <input type="checkbox" name="parking">
-            <br>
-            <input type="submit" value="Filtra">
-            <input type="reset" value="Reset">
+        <form action="index.php" method="GET">
+            <div class="d-flex align-items-end">
+                <label for="parking">Parking</label>
+                <select name="parking" id="parking">
+                    <option value="">all</option>
+                    <option value="1">with parking</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="vote">VOTE</label>
+                <input class="form-control" type="number" id="vote" name="vote" min="1" max="5">
+            </div> 
+            <button class="btn btn-primary" type="submit">Filter</button>
         </form>
 
-
         <table class="table bg-light">
-
             <thead>
                 <tr>
                     <th scope="col">Hotel Name</th>
@@ -79,28 +109,15 @@ $filterParking = $_GET["parking"];
             </thead>
 
             <tbody>
-                <?php foreach ($hotels as $hotel) {
-
-                    $name = $hotel["name"];
-                    $description = $hotel["description"];
-                    $parking = $hotel["parking"];
-                    $vote = $hotel["vote"];
-                    $distance = $hotel["distance_to_center"];
-
-                    if (!$filterParking || ($filterParking && $parking)) {
-                        echo '<tr>'
-                        . '<td>' . $name . '</td>'
-                        . '<td>' . $description . '</td>'
-                        . '<td>' . ($parking ? "YES" : "NO") . '</td>'
-                        . '<td>' . $vote . '</td>'
-                        . '<td>' . $distance . ' km' . '</td>'
-                        . '</tr>';
-    
-                    }
-
-                    }
-
-                ?>
+                <?php foreach ($filtered_hotels as $hotel) { ?>
+                    <tr>
+                        <td><?php echo $hotel["name"]; ?></td>
+                        <td><?php echo $hotel["description"]; ?></td>
+                        <td><?php echo $hotel["parking"] ? 'SI' : 'NO'; ?></td>
+                        <td><?php echo $hotel["vote"]; ?></td>
+                        <td><?php echo $hotel["distance_to_center"]; ?></td>
+                    </tr>
+                <?php } ?>
             </tbody>
             
         </table>
